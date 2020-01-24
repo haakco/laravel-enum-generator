@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace HaakCo\LaravelEnumGenerator\Console\Commands;
 
-use App\Libraries\System\EnumCreateLibrary;
+use HaakCo\LaravelEnumGeneratorLibraries\System\EnumCreateLibrary;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ModelEnumCreate extends Command
 {

@@ -2,7 +2,7 @@
 
 namespace HaakCo\LaravelEnumGenerator;
 
-use App\Console\Commands\ModelEnumCreate;
+use HaakCo\LaravelEnumGenerator\Console\Commands\ModelEnumCreate;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelEnumGeneratorServiceProvider extends ServiceProvider

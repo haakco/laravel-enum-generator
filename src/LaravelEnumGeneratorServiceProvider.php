@@ -2,6 +2,7 @@
 
 namespace HaakCo\LaravelEnumGenerator;
 
+use App\Console\Commands\ModelEnumCreate;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelEnumGeneratorServiceProvider extends ServiceProvider
@@ -58,7 +59,7 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
 
         // Registering package commands.
          $this->commands([
-             'modelEnum:create',
+             ModelEnumCreate::class
          ]);
     }
 }

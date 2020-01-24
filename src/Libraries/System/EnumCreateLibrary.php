@@ -21,7 +21,7 @@ class EnumCreateLibrary
     public function create(?Command $commandThis = null)
     {
         $this->commandThis = $commandThis;
-        $tableNames = config('enum.tables');
+        $tableNames = config('enum-generator.tables');
 
         foreach ($tableNames as $tableName => $tableOptions) {
             $this->log('Creating enum for ' . $tableName);
@@ -38,7 +38,7 @@ class EnumCreateLibrary
             foreach (explode('.', $tableName) as $subName) {
                 /** @noinspection NotOptimalIfConditionsInspection */
                 if (
-                    config('enum.default-leave-schema') ||
+                    config('enum-generator.default-leave-schema') ||
                     (!empty($tableOptions['leave-schema']) && $tableOptions['leave-schema'])
                 ) {
                     $className .= Str::studly($subName);
@@ -84,7 +84,7 @@ class EnumCreateLibrary
                     'tableOptions' => $tableOptions,
                 ])->render();
 
-            $enumPath = config('enum.enumPath');
+            $enumPath = config('enum-generator.enumPath');
             // if it doesn't exist create and make sure it exists
             if (!is_dir($enumPath) && !mkdir($enumPath, '440') && !is_dir($enumPath)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $enumPath));

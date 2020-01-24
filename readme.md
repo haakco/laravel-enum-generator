@@ -12,10 +12,35 @@ This is where your description should go. Take a look at [contributing.md](contr
 Via Composer
 
 ``` bash
-$ composer require haakco/laravelenumgenerator
+$ composer require haakco/laravel-enum-generator --dev
+```
+
+### Configuration for local environment only
+
+If you wish to enable generators only for your local environment, you should install it via composer using the --dev option like this:
+
+```shell
+composer require haakco/laravel-enum-generator --dev
+```
+
+Then you'll need to register the provider in `app/Providers/AppServiceProvider.php` file.
+
+```php
+public function register()
+{
+    if ($this->app->environment() == 'local') {
+        $this->app->register(\HaakCo\LaravelEnumGenerator\LaravelEnumGeneratorServiceProvider::class);
+    }
+}
 ```
 
 ## Usage
+
+Copy the config over
+
+```shell
+php artisan vendor:publish --provider="\HaakCo\LaravelEnumGenerator\LaravelEnumGeneratorServiceProvider"
+```
 
 ## Change log
 

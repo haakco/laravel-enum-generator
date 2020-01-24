@@ -39,7 +39,15 @@ public function register()
 Copy the config over
 
 ```shell
-php artisan vendor:publish --provider="\HaakCo\LaravelEnumGenerator\LaravelEnumGeneratorServiceProvider"
+php artisan vendor:publish --provider="HaakCo\LaravelEnumGenerator\LaravelEnumGeneratorServiceProvider"
+```
+
+Edit the config file enum-generator.php to specify which tables to use to generate the files.
+
+Now run the following to re-create your models. 
+
+```shell
+php artisan modelEnum:create
 ```
 
 ## Change log

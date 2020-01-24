@@ -2,7 +2,7 @@
 
 namespace HaakCo\LaravelEnumGenerator\Console\Commands;
 
-use HaakCo\LaravelEnumGeneratorLibraries\System\EnumCreateLibrary;
+use HaakCo\LaravelEnumGenerator\Libraries\System\EnumCreateLibrary;
 use Illuminate\Console\Command;
 
 class ModelEnumCreate extends Command

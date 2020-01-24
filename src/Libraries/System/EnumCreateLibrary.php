@@ -1,6 +1,6 @@
 <?php
 
-namespace HaakCo\LaravelEnumGeneratorLibraries\System;
+namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;

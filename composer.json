@@ -4,9 +4,11 @@
   "keywords": [
     "laravel",
     "haakco",
-    "enum"
+    "model",
+    "laravel-enum-generator",
+    "LaravelEnumGenerator"
   ],
-  "license": "MIT",
+  "license": "mit",
   "authors": [
     {
       "name": "Tim Haak",
@@ -14,11 +16,7 @@
       "homepage": "https://haak.co"
     }
   ],
-  "homepage": "https://github.com/haakco/laravelenumgenerator",
-  "keywords": [
-    "Laravel",
-    "LaravelEnumGenerator"
-  ],
+  "homepage": "https://github.com/haakco/laravel-enum-generator",
   "require": {
     "php": ">=7.3.0",
     "illuminate/support": "~5|~6"
@@ -27,7 +25,8 @@
     "phpunit/phpunit": "^8.0",
     "mockery/mockery": "^1.1",
     "orchestra/testbench": "~3|~4",
-    "sempro/phpunit-pretty-print": "^1.0"
+    "sempro/phpunit-pretty-print": "^1.0",
+    "roave/security-advisories": "dev-master"
   },
   "autoload": {
     "psr-4": {

@@ -77,14 +77,14 @@ If you discover any security related issues, please email tim@haak.co instead of
 
 mit. Please see the [license file](license.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/haakco/laravelenumgenerator.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/haakco/laravelenumgenerator.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/haakco/laravelenumgenerator/master.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/haakco/laravel-enum-generator.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/haakco/laravel-enum-generator.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/haakco/laravel-enum-generator/master.svg?style=flat-square
 [ico-styleci]: https://styleci.io/repos/12345678/shield
 
-[link-packagist]: https://packagist.org/packages/haakco/laravelenumgenerator
-[link-downloads]: https://packagist.org/packages/haakco/laravelenumgenerator
-[link-travis]: https://travis-ci.org/haakco/laravelenumgenerator
+[link-packagist]: https://packagist.org/packages/haakco/laravel-enum-generator
+[link-downloads]: https://packagist.org/packages/haakco/laravel-enum-generator
+[link-travis]: https://travis-ci.org/haakco/laravel-enum-generator
 [link-styleci]: https://styleci.io/repos/12345678
 [link-author]: https://github.com/haakco
 [link-contributors]: ../../contributors

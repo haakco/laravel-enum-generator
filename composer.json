@@ -1,7 +1,12 @@
 {
   "name": "haakco/laravel-enum-generator",
   "description": "Generates simple class to act as an enum from a table specified in its con",
-  "license": "mit",
+  "keywords": [
+    "laravel",
+    "haakco",
+    "enum"
+  ],
+  "license": "MIT",
   "authors": [
     {
       "name": "Tim Haak",

@@ -77,7 +77,7 @@ class EnumCreateLibrary
                 );
             }
 
-            $msgHtml = "<?php\n\n" . view('enum-generator:enums.enum', [
+            $msgHtml = "<?php\n\n" . view('laravel-enum-generator::enums.enum', [
                     'className' => $className,
                     'tableName' => $tableName,
                     'enumDataRows' => $enumDataRows,

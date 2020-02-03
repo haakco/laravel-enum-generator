@@ -57,7 +57,7 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../config/enum-generator.php' => config_path('enum-generator.php'),
         ], 'laravelenumgenerator.config');
 
-        $this->loadViewsFrom(__DIR__.'/views', 'enum-generator');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laravel-enum-generator');
 
         // Registering package commands.
          $this->commands([

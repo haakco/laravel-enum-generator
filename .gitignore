@@ -12,7 +12,6 @@
 /storage/framework/testing
 /storage/framework/httpcache
 /storage/framework/logs
-/storage/httpcache
 /storage/logs
 
 /vendor
@@ -99,7 +98,6 @@ $RECYCLE.BIN/
 !.gitignore
 !.gitkeep
 !/storage/debugbar/.gitkeep
-!/storage/httpcache/.gitkeep
 !/storage/framework/views/.gitignore
 !/storage/logs/.gitignore
 !/storage/framework/testing/disks/local/.gitkeep

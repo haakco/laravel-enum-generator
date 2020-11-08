@@ -66,22 +66,26 @@ class EnumCreateLibrary
                 $tableOptions['prepend-name'] = $tableOptions['prepend_name'];
             }
 
+            $tableOptions['uuid'] = $tableOptions['uuid'] ?? $this->defaultUseUuid;
+            $tableOptions['leave-schema'] = $tableOptions['leave-schema'] ?? $this->defaultLeaveSchema;
+            $tableOptions['prepend-class'] = $tableOptions['prepend-class'] ?? $this->defaultPrependClass;
+            $tableOptions['prepend-name'] = $tableOptions['prepend-name'] ?? $this->defaultPrependName;
+
             $this->log('Creating enum for ' . $tableName);
 
             $sql = 'select id, name';
 
-            if ((!isset($tableOptions['uuid']) && $this->defaultUseUuid) ||
-                (isset($tableOptions['uuid']) && $tableOptions['uuid'])) {
+            if (!empty($tableOptions['uuid'])) {
                 $sql .= ', uuid';
             }
+
             $sql .= ' from ' . $tableName;
             $enumDataRows = DB::select($sql);
 
             $className = '';
             foreach (explode('.', $tableName) as $subName) {
                 /** @noinspection NotOptimalIfConditionsInspection */
-                if ((!isset($tableOptions['leave-schema']) && $this->defaultLeaveSchema) ||
-                    (isset($tableOptions['leave-schema']) && $tableOptions['leave-schema'])) {
+                if (!empty($tableOptions['leave-schema'])) {
                     $className .= Str::studly($subName);
                 } else {
                     $className = Str::studly($subName);
@@ -89,8 +93,7 @@ class EnumCreateLibrary
             }
 
             $className .= 'Enum';
-            if ((!isset($tableOptions['prepend-class']) && !empty($this->defaultPrependClass)) ||
-                (isset($tableOptions['prepend-class']) && !empty($tableOptions['prepend-class']))) {
+            if (!empty($tableOptions['prepend-class'])) {
                 $className = Str::studly($tableOptions['prepend-class']) . '_' . $className;
             }
             $className = Str::studly($className);
@@ -98,8 +101,7 @@ class EnumCreateLibrary
             foreach ($enumDataRows as $enumDataRow) {
                 $enumDataRow->nameString = strtoupper($enumDataRow->name);
 
-                if ((!isset($tableOptions['prepend-name']) && !empty($this->defaultPrependName)) ||
-                    (isset($tableOptions['prepend-name']) && !empty($tableOptions['prepend-name']))) {
+                if (!empty($tableOptions['prepend-name'])) {
                     $enumDataRow->nameString = strtoupper(
                             $tableOptions['prepend_name']
                         ) .

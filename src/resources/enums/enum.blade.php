@@ -1,4 +1,3 @@
-
 namespace {{ $nameSpace }};
 
 class {{ $className }}

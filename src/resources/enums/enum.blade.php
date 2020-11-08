@@ -1,3 +1,4 @@
+
 namespace {{ $nameSpace }};
 
 class {{ $className }}

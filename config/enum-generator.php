@@ -2,13 +2,16 @@
 
 return [
     'default-leave-schema' => false,
-    'enumPath' => app_path() . '/Models/Enum',
+    'default-uuid' => false,
+    'default-prepend_class' => '',
+    'default-prepend_name' => '',
+    'enumPath' => app_path() . '/Models/Enums',
     'tables' => [
 //        'public.permissions' => [
-//            'uuid' => true,
+//            'uuid' => false,
 //            'leave-schema' => true,
-//            'prepend_class' => 'Rights',
-//            'prepend_name' => 'Rights',
+//            'prepend-class' => 'Rights',
+//            'prepend-name' => 'Rights',
 //        ],
     ]
 ];

@@ -134,9 +134,9 @@ class EnumCreateLibrary
 
             // if it doesn't exist create and make sure it exists
             if (!is_dir($this->enumPath) && !mkdir($this->enumPath, '440') && !is_dir($this->enumPath)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->enumPath));
+                throw new \RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
             }
-            file_put_contents($this->enumPath . $className . '.php', $msgHtml);
+            file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
         }
     }
 }

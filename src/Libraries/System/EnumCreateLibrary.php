@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+use function str_replace;
+
 class EnumCreateLibrary
 {
     private $commandThis;
@@ -122,9 +124,21 @@ class EnumCreateLibrary
                 );
             }
 
+            $nameSpace = 'App\\' . str_replace(
+                [
+                    app_path() . '/',
+                    '/',
+                ],
+                [
+                    '',
+                    '\\',
+                ],
+                $this->enumPath);
+
             $msgHtml = "<?php\n\n" . view(
                     'laravel-enum-generator::enums.enum',
                     [
+                        'nameSpace' => $nameSpace,
                         'className' => $className,
                         'tableName' => $tableName,
                         'enumDataRows' => $enumDataRows,

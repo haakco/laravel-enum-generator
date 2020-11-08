@@ -1,4 +1,4 @@
-namespace App\Models\Enum;
+namespace {{ $nameSpace }};
 
 class {{ $className }}
 {

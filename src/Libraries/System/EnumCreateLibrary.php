@@ -75,7 +75,7 @@ class EnumCreateLibrary
 
             $this->log('Creating enum for ' . $tableName);
 
-            $sql = 'select id, name';
+            $sql = "select id, name";
 
             if (!empty($tableOptions['uuid'])) {
                 $sql .= ', uuid';
@@ -101,7 +101,16 @@ class EnumCreateLibrary
             $className = Str::studly($className);
 
             foreach ($enumDataRows as $enumDataRow) {
-                $enumDataRow->nameString = strtoupper($enumDataRow->name);
+                $enumDataRow->nameString = strtoupper(
+                    Str::slug(
+                        str_replace(
+                            '/',
+                            '_',
+                            $enumDataRow->name
+                        ),
+                        '_'
+                    )
+                );
 
                 if (!empty($tableOptions['prepend-name'])) {
                     $enumDataRow->nameString = strtoupper(
@@ -125,15 +134,16 @@ class EnumCreateLibrary
             }
 
             $nameSpace = 'App\\' . str_replace(
-                [
-                    app_path() . '/',
-                    '/',
-                ],
-                [
-                    '',
-                    '\\',
-                ],
-                $this->enumPath);
+                    [
+                        app_path() . '/',
+                        '/',
+                    ],
+                    [
+                        '',
+                        '\\',
+                    ],
+                    $this->enumPath
+                );
 
             $msgHtml = "<?php\n\n" . view(
                     'laravel-enum-generator::enums.enum',

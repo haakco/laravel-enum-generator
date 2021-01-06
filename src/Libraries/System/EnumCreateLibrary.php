@@ -5,6 +5,8 @@ namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
+use Throwable;
 
 use function str_replace;
 
@@ -55,6 +57,10 @@ class EnumCreateLibrary
         info($msg);
     }
 
+    /**
+     * @param Command|null $commandThis
+     * @throws Throwable
+     */
     public function create(?Command $commandThis = null): void
     {
         $this->commandThis = $commandThis;
@@ -86,7 +92,6 @@ class EnumCreateLibrary
 
             $className = '';
             foreach (explode('.', $tableName) as $subName) {
-                /** @noinspection NotOptimalIfConditionsInspection */
                 if (!empty($tableOptions['leave-schema'])) {
                     $className .= Str::studly($subName);
                 } else {
@@ -104,8 +109,14 @@ class EnumCreateLibrary
                 $enumDataRow->nameString = strtoupper(
                     Str::slug(
                         str_replace(
-                            '/',
-                            '_',
+                            [
+                                '/',
+                                '+',
+                            ],
+                            [
+                                '+',
+                                'plus',
+                            ],
                             $enumDataRow->name
                         ),
                         '_'
@@ -127,7 +138,7 @@ class EnumCreateLibrary
                     ],
                     [
                         '_',
-                        ''
+                        '_dash_'
                     ],
                     $enumDataRow->nameString
                 );
@@ -158,7 +169,7 @@ class EnumCreateLibrary
 
             // if it doesn't exist create and make sure it exists
             if (!is_dir($this->enumPath) && !mkdir($this->enumPath, '440') && !is_dir($this->enumPath)) {
-                throw new \RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
+                throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
             }
             file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
         }

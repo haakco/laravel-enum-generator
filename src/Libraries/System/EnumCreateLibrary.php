@@ -123,6 +123,10 @@ class EnumCreateLibrary
                     )
                 );
 
+                if ($enumDataRow->nameString !== '' && is_numeric($enumDataRow->nameString[0])) {
+                    $enumDataRow->nameString = 'N_' . $enumDataRow->nameString;
+                }
+
                 if (!empty($tableOptions['prepend-name'])) {
                     $enumDataRow->nameString = strtoupper(
                             $tableOptions['prepend_name']

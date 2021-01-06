@@ -114,8 +114,8 @@ class EnumCreateLibrary
                                 '+',
                             ],
                             [
-                                '+',
-                                'plus',
+                                '_',
+                                '_plus_',
                             ],
                             $enumDataRow->name
                         ),

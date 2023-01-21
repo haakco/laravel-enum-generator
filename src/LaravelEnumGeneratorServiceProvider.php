@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HaakCo\LaravelEnumGenerator;
 
 use HaakCo\LaravelEnumGenerator\Console\Commands\ModelEnumCreate;
@@ -9,8 +11,6 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -22,8 +22,6 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
 
     /**
      * Register any package services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -47,8 +45,6 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
 
     /**
      * Console-specific booting.
-     *
-     * @return void
      */
     protected function bootForConsole()
     {
@@ -60,8 +56,6 @@ class LaravelEnumGeneratorServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laravel-enum-generator');
 
         // Registering package commands.
-         $this->commands([
-             ModelEnumCreate::class
-         ]);
+        $this->commands([ModelEnumCreate::class]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HaakCo\LaravelEnumGenerator\Console\Commands;
 
 use HaakCo\LaravelEnumGenerator\Libraries\System\EnumCreateLibrary;
@@ -23,8 +25,6 @@ class ModelEnumCreate extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

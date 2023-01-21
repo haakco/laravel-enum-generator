@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="HaakCo_Standard" namespace="EntryGeek\CS\Standard">
+    <description>A custom coding standard</description>
+    <file>config</file>
+    <file>resources</file>
+    <file>src</file>
+    <file>tests</file>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*.blade.php</exclude-pattern>
+<!--    <exclude-pattern>*/archived_migrations/*</exclude-pattern>-->
+<!--    <exclude-pattern>*/migrations/*</exclude-pattern>-->
+<!--    <exclude-pattern>*/resources/*</exclude-pattern>-->
+    <exclude-pattern>*/storage/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/bootstrap/cache/*</exclude-pattern>
+    <exclude-pattern>*/.phpstorm.meta.php</exclude-pattern>
+    <exclude-pattern>*/_ide_*.php</exclude-pattern>
+    <exclude-pattern>*/app/Models/*.php</exclude-pattern>
+    <arg name="encoding" value="utf-8"/>
+    <arg name="basepath" value="."/>
+    <arg name="cache" value=".php_cs.cache"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="1"/>
+    <!-- Show progress -->
+    <arg value="p"/>
+    <rule ref="PSR12">
+        <type>warning</type>
+    </rule>
+</ruleset>

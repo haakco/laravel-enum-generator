@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
-use Throwable;
+use function is_int;
+use function is_string;
 use function str_replace;
 
 class EnumCreateLibrary
@@ -30,7 +33,6 @@ class EnumCreateLibrary
     public function __construct()
     {
         $this->defaultLeaveSchema = config('enum-generator.default-leave-schema', true);
-        $this->defaultUseUuid = config('enum-generator.default-uuid', false);
         $this->defaultPrependClass = config('enum-generator.default-prepend-class', '');
         $this->defaultPrependName = config('enum-generator.default-prepend_name', '');
         $this->enumPath = config('enum-generator.enumPath', app_path() . '/Models/Enums');
@@ -41,15 +43,17 @@ class EnumCreateLibrary
         }
     }
 
-    /**
-     * @param Command|null $commandThis
-     * @throws Throwable
-     */
+
     public function create(?Command $commandThis = null): void
     {
         $this->commandThis = $commandThis;
 
         foreach ($this->tableNames as $tableName => $tableOptions) {
+            if (is_string($tableOptions) && is_int($tableName)) {
+                $tableName = $tableOptions;
+                $tableOptions = [];
+            }
+
             //Fix previous config format to be more consistent
             if (isset($tableOptions['prepend_class'])) {
                 $tableOptions['prepend-class'] = $tableOptions['prepend_class'];
@@ -65,9 +69,9 @@ class EnumCreateLibrary
 
             $this->log('Creating enum for ' . $tableName);
 
-            $sql = "select id, name";
+            $sql = 'select id, name';
 
-            if (!empty($tableOptions['uuid'])) {
+            if (! empty($tableOptions['uuid'])) {
                 $sql .= ', uuid';
             }
 
@@ -76,7 +80,7 @@ class EnumCreateLibrary
 
             $className = '';
             foreach (explode('.', $tableName) as $subName) {
-                if (!empty($tableOptions['leave-schema'])) {
+                if (! empty($tableOptions['leave-schema'])) {
                     $className .= Str::studly($subName);
                 } else {
                     $className = Str::studly($subName);
@@ -84,79 +88,48 @@ class EnumCreateLibrary
             }
 
             $className .= 'Enum';
-            if (!empty($tableOptions['prepend-class'])) {
+            if (! empty($tableOptions['prepend-class'])) {
                 $className = Str::studly($tableOptions['prepend-class']) . '_' . $className;
             }
             $className = Str::studly($className);
 
             foreach ($enumDataRows as $enumDataRow) {
                 $enumDataRow->nameString = strtoupper(
-                    Str::slug(
-                        str_replace(
-                            [
-                                '/',
-                                '+',
-                            ],
-                            [
-                                '_',
-                                '_plus_',
-                            ],
-                            $enumDataRow->name
-                        ),
-                        '_'
-                    )
+                    Str::slug(str_replace(['/', '+'], ['_', '_plus_'], $enumDataRow->name), '_')
                 );
 
                 if ($enumDataRow->nameString !== '' && is_numeric($enumDataRow->nameString[0])) {
                     $enumDataRow->nameString = 'N_' . $enumDataRow->nameString;
                 }
 
-                if (!empty($tableOptions['prepend-name'])) {
-                    $enumDataRow->nameString = strtoupper(
-                            $tableOptions['prepend_name']
-                        ) .
+                if (! empty($tableOptions['prepend-name'])) {
+                    $enumDataRow->nameString = strtoupper($tableOptions['prepend_name']) .
                         '_' .
                         $enumDataRow->nameString;
                 }
 
                 $enumDataRow->nameString = preg_replace(
-                    [
-                        '/\s+/',
-                        '/-+/'
-                    ],
-                    [
-                        '_',
-                        '_dash_'
-                    ],
+                    ['/\s+/', '/-+/'],
+                    ['_', '_dash_'],
                     $enumDataRow->nameString
                 );
             }
 
-            $nameSpace = 'App\\' . str_replace(
-                    [
-                        app_path() . '/',
-                        '/',
-                    ],
-                    [
-                        '',
-                        '\\',
-                    ],
-                    $this->enumPath
-                );
+            $nameSpace = 'App\\' . str_replace([app_path() . '/', '/'], ['', '\\'], $this->enumPath);
 
             $msgHtml = "<?php\n\n" . view(
-                    $this->templateName,
-                    [
-                        'nameSpace' => $nameSpace,
-                        'className' => $className,
-                        'tableName' => $tableName,
-                        'enumDataRows' => $enumDataRows,
-                        'tableOptions' => $tableOptions,
-                    ]
-                )->render();
+                $this->templateName,
+                [
+                    'nameSpace' => $nameSpace,
+                    'className' => $className,
+                    'tableName' => $tableName,
+                    'enumDataRows' => $enumDataRows,
+                    'tableOptions' => $tableOptions,
+                ]
+            )->render();
 
             // if it doesn't exist create and make sure it exists
-            if (!is_dir($this->enumPath) && !mkdir($this->enumPath, '440') && !is_dir($this->enumPath)) {
+            if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, '440') && ! is_dir($this->enumPath)) {
                 throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
             }
             file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);

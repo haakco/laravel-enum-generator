@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
+use function config;
 use function is_int;
 use function is_string;
 use function str_replace;
@@ -38,7 +39,7 @@ class EnumCreateLibrary
         $this->enumPath = config('enum-generator.enumPath', app_path() . '/Models/Enums');
         $this->tableNames = config('enum-generator.tables');
 
-        if (\config('enum-generator.use-enum-format', false)) {
+        if (!config('enum-generator.use-enum-format', false)) {
             $this->templateName = 'laravel-enum-generator::enums.enum-class';
         }
     }

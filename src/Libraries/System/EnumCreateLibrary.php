@@ -19,8 +19,6 @@ class EnumCreateLibrary
 
     private bool $defaultLeaveSchema;
 
-    private bool $defaultUseUuid;
-
     private string $defaultPrependClass;
 
     private string $defaultPrependName;
@@ -63,7 +61,6 @@ class EnumCreateLibrary
                 $tableOptions['prepend-name'] = $tableOptions['prepend_name'];
             }
 
-            $tableOptions['uuid'] = $tableOptions['uuid'] ?? $this->defaultUseUuid;
             $tableOptions['leave-schema'] = $tableOptions['leave-schema'] ?? $this->defaultLeaveSchema;
             $tableOptions['prepend-class'] = $tableOptions['prepend-class'] ?? $this->defaultPrependClass;
             $tableOptions['prepend-name'] = $tableOptions['prepend-name'] ?? $this->defaultPrependName;

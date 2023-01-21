@@ -1,7 +1,9 @@
 
 namespace {{ $nameSpace }};
 
-enum {{ $className }}
+enum {{ $className }}: string
 {
+@foreach ($enumDataRows as $enumDataRow)
     case {{ $enumDataRow->nameString }} = '{{ $enumDataRow->name }}';
+@endforeach
 }

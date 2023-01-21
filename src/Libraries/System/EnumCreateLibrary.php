@@ -29,7 +29,11 @@ class EnumCreateLibrary
 
     private array $tableNames;
 
-    private string $templateName = 'laravel-enum-generator::enums.enum';
+    private string $templateName = 'laravel-enum-generator::enums.enum-string';
+
+    private string $templateIdName = 'laravel-enum-generator::enums.enum-id';
+
+    private string $templateOldName = 'laravel-enum-generator::enums.enum-class';
 
     public function __construct()
     {
@@ -38,10 +42,6 @@ class EnumCreateLibrary
         $this->defaultPrependName = config('enum-generator.default-prepend_name', '');
         $this->enumPath = config('enum-generator.enumPath', app_path() . '/Models/Enums');
         $this->tableNames = config('enum-generator.tables');
-
-        if (!config('enum-generator.use-enum-format', false)) {
-            $this->templateName = 'laravel-enum-generator::enums.enum-class';
-        }
     }
 
 
@@ -118,22 +118,61 @@ class EnumCreateLibrary
 
             $nameSpace = 'App\\' . str_replace([app_path() . '/', '/'], ['', '\\'], $this->enumPath);
 
-            $msgHtml = "<?php\n\n" . view(
-                $this->templateName,
-                [
-                    'nameSpace' => $nameSpace,
-                    'className' => $className,
-                    'tableName' => $tableName,
-                    'enumDataRows' => $enumDataRows,
-                    'tableOptions' => $tableOptions,
-                ]
-            )->render();
+            if (!config('enum-generator.use-enum-format', false)) {
 
-            // if it doesn't exist create and make sure it exists
-            if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, '440') && ! is_dir($this->enumPath)) {
-                throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
+                $msgHtml = "<?php\n\n" . view(
+                        $this->templateOldName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $className,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
+
+                // if it doesn't exist create and make sure it exists
+                if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
+                    throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
+                }
+                file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
+            } else {
+                $msgHtml = "<?php\n\n" . view(
+                        $this->templateName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $className,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
+
+                // if it doesn't exist create and make sure it exists
+                if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
+                    throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
+                }
+                file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
+
+                $idClassName = $className.'Id';
+                $msgHtml = "<?php\n\n" . view(
+                        $this->templateIdName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $idClassName,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
+
+                // if it doesn't exist create and make sure it exists
+                if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
+                    throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
+                }
+                file_put_contents($this->enumPath . '/' . $idClassName . '.php', $msgHtml);
             }
-            file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
+
         }
     }
 

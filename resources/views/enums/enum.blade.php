@@ -1,12 +1,20 @@
+
 namespace {{ $nameSpace }};
+
+enum $className
+{
+case DRAFT;
+case PUBLISHED;
+case ARCHIVED;
+}
 
 class {{ $className }}
 {
 @foreach ($enumDataRows as $enumDataRow)
-    public const {{ $enumDataRow->nameString }}_ID = {{ $enumDataRow->id }};
+    case {{ $enumDataRow->nameString }}_ID = {{ $enumDataRow->id }};
 @if ($tableOptions['uuid'])
-    public const {{ $enumDataRow->nameString }}_ENUM = '{{ $enumDataRow->uuid }}';
+    case {{ $enumDataRow->nameString }}_ENUM = '{{ $enumDataRow->uuid }}';
 @endif
-    public const {{ $enumDataRow->nameString }}_NAME = '{{ $enumDataRow->name }}';
+    case {{ $enumDataRow->nameString }}_NAME = '{{ $enumDataRow->name }}';
 @endforeach
 }

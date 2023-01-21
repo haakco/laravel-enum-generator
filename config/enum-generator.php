@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'use-enum-format' => true,
     'default-leave-schema' => false,
     'default-uuid' => false,
     'default-prepend_class' => '',

@@ -7,37 +7,25 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Throwable;
-
 use function str_replace;
 
 class EnumCreateLibrary
 {
-    private $commandThis;
+    private Command|null $commandThis;
 
-    /**
-     * @var boolean
-     */
-    private $defaultLeaveSchema;
-    /**
-     * @var boolean
-     */
-    private $defaultUseUuid;
-    /**
-     * @var string
-     */
-    private $defaultPrependClass;
-    /**
-     * @var string
-     */
-    private $defaultPrependName;
-    /**
-     * @var string
-     */
-    private $enumPath;
-    /**
-     * @var array
-     */
-    private $tableNames;
+    private bool $defaultLeaveSchema;
+
+    private bool $defaultUseUuid;
+
+    private string $defaultPrependClass;
+
+    private string $defaultPrependName;
+
+    private string $enumPath;
+
+    private array $tableNames;
+
+    private string $templateName = 'laravel-enum-generator::enums.enum';
 
     public function __construct()
     {
@@ -47,14 +35,10 @@ class EnumCreateLibrary
         $this->defaultPrependName = config('enum-generator.default-prepend_name', '');
         $this->enumPath = config('enum-generator.enumPath', app_path() . '/Models/Enums');
         $this->tableNames = config('enum-generator.tables');
-    }
 
-    private function log($msg): void
-    {
-        if ($this->commandThis !== null) {
-            $this->commandThis->info($msg);
+        if (\config('enum-generator.use-enum-format', false)) {
+            $this->templateName = 'laravel-enum-generator::enums.enum-class';
         }
-        info($msg);
     }
 
     /**
@@ -161,7 +145,7 @@ class EnumCreateLibrary
                 );
 
             $msgHtml = "<?php\n\n" . view(
-                    'laravel-enum-generator::enums.enum',
+                    $this->templateName,
                     [
                         'nameSpace' => $nameSpace,
                         'className' => $className,
@@ -177,5 +161,13 @@ class EnumCreateLibrary
             }
             file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
         }
+    }
+
+    private function log($msg): void
+    {
+        if ($this->commandThis !== null) {
+            $this->commandThis->info($msg);
+        }
+        info($msg);
     }
 }

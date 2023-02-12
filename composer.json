@@ -19,6 +19,7 @@
   "homepage": "https://github.com/haakco/laravel-enum-generator",
   "require": {
     "php": ">=8.0.0",
+    "archtechx/enums": "^0.3.1",
     "illuminate/support": "*"
   },
   "require-dev": {

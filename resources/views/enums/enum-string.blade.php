@@ -1,6 +1,8 @@
 
 namespace {{ $nameSpace }};
 
+use ArchTech\Enums\InvokableCases;
+
 enum {{ $className }}: string
 {
     use InvokableCases;

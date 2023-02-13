@@ -6,6 +6,8 @@ return [
     'use-enum-format' => true,
     'default-leave-schema' => false,
     'default-uuid' => false,
+    'id-field' => 'id',
+    'name-field' => 'name',
     'default-prepend_class' => '',
     'default-prepend_name' => '',
     'enumPath' => app_path() . '/Models/Enums',

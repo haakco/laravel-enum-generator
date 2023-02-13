@@ -6,6 +6,7 @@ namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class EnumCreateLibrary
@@ -180,9 +181,7 @@ class EnumCreateLibrary
     function log(
         $msg
     ): void{
-        if($this->commandThis!==null){
-            $this->commandThis->info($msg);
-        }
+        $this->commandThis?->info($msg);
         info($msg);
     }
 }

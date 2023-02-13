@@ -5,13 +5,7 @@ declare(strict_types=1);
 namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use RuntimeException;
-use function config;
-use function is_int;
-use function is_string;
-use function str_replace;
 
 class EnumCreateLibrary
 {
@@ -32,6 +26,9 @@ class EnumCreateLibrary
     private string $templateIdName = 'laravel-enum-generator::enums.enum-id';
 
     private string $templateOldName = 'laravel-enum-generator::enums.enum-class';
+    private string $defaultIdField;
+
+    private mixed $defaultNameField;
 
     public function __construct(){
         $this->defaultLeaveSchema = config('enum-generator.default-leave-schema',true);
@@ -39,6 +36,8 @@ class EnumCreateLibrary
         $this->defaultPrependName = config('enum-generator.default-prepend_name','');
         $this->enumPath = config('enum-generator.enumPath',app_path().'/Models/Enums');
         $this->tableNames = config('enum-generator.tables');
+        $this->defaultIdField = config('enum-generator.id-field','id');
+        $this->defaultNameField = config('enum-generator.name-field','name');
     }
 
 
@@ -62,12 +61,14 @@ class EnumCreateLibrary
             $tableOptions['leave-schema'] = $tableOptions['leave-schema']??$this->defaultLeaveSchema;
             $tableOptions['prepend-class'] = $tableOptions['prepend-class']??$this->defaultPrependClass;
             $tableOptions['prepend-name'] = $tableOptions['prepend-name']??$this->defaultPrependName;
+            $tableOptions['id-field'] = $tableOptions['id-field']??$this->defaultIdField;
+            $tableOptions['name-field'] = $tableOptions['name-field']??$this->defaultNameField;
 
             $this->log('Creating enum for '.$tableName);
 
             $sql = 'select '.
-                config('enum-generator.id-field').' as id'.
-                ', '.config('enum-generator.name-field').' as name';
+                $tableOptions['id-field'].' as id'.
+                ', '.$tableOptions['name-field'].' as name';
 
             if(!empty($tableOptions['uuid'])){
                 $sql .= ', uuid';
@@ -120,7 +121,7 @@ class EnumCreateLibrary
                 $msgHtml = "<?php\n\n".view(
                         $this->templateOldName,
                         [
-                            'nameSpace' => $nameSpace,
+                            'namespace' => $nameSpace,
                             'className' => $className,
                             'tableName' => $tableName,
                             'enumDataRows' => $enumDataRows,
@@ -132,6 +133,7 @@ class EnumCreateLibrary
                 if(!is_dir($this->enumPath) && !mkdir($this->enumPath,440) && !is_dir($this->enumPath)){
                     throw new RuntimeException(sprintf('Di rectory "%s" was not created',$this->enumPath));
                 }
+
                 file_put_contents($this->enumPath.'/'.$className.'.php',$msgHtml);
             }else{
                 $msgHtml = "<?php\n\n".view(
@@ -173,7 +175,10 @@ class EnumCreateLibrary
         }
     }
 
-    private function log($msg): void{
+    private
+    function log(
+        $msg
+    ): void{
         if($this->commandThis!==null){
             $this->commandThis->info($msg);
         }

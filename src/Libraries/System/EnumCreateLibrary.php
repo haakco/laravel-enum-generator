@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class EnumCreateLibrary

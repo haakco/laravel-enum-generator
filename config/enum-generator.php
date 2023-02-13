@@ -12,13 +12,13 @@ return [
     'default-prepend_name' => '',
     'enumPath' => app_path() . '/Models/Enums',
     'tables' => [
-//        'public.permissions' => [
-//            'uuid' => false,
-//            'leave-schema' => true,
-//            'prepend-class' => 'Rights',
-//            'prepend-name' => 'Rights',
-//            'id-field' => 'id',
-//            'name-field' => 'name',
-//        ],
+        //        'public.permissions' => [
+        //            'uuid' => false,
+        //            'leave-schema' => true,
+        //            'prepend-class' => 'Rights',
+        //            'prepend-name' => 'Rights',
+        //            'id-field' => 'id',
+        //            'name-field' => 'name',
+        //        ],
     ],
 ];

@@ -48,7 +48,6 @@ class EnumCreateLibrary
         $this->defaultNameField = config('enum-generator.name-field', 'name');
     }
 
-
     public function create(?Command $commandThis = null): void
     {
         $this->commandThis = $commandThis;
@@ -125,18 +124,17 @@ class EnumCreateLibrary
 
             $nameSpace = 'App\\' . str_replace([app_path() . '/', '/'], ['', '\\'], $this->enumPath);
 
-            if (!config('enum-generator.use-enum-format', false)) {
-
+            if (! config('enum-generator.use-enum-format', false)) {
                 $msgHtml = "<?php\n\n" . view(
-                        $this->templateOldName,
-                        [
-                            'nameSpace' => $nameSpace,
-                            'className' => $className,
-                            'tableName' => $tableName,
-                            'enumDataRows' => $enumDataRows,
-                            'tableOptions' => $tableOptions,
-                        ]
-                    )->render();
+                    $this->templateOldName,
+                    [
+                        'nameSpace' => $nameSpace,
+                        'className' => $className,
+                        'tableName' => $tableName,
+                        'enumDataRows' => $enumDataRows,
+                        'tableOptions' => $tableOptions,
+                    ]
+                )->render();
 
                 // if it doesn't exist create and make sure it exists
                 if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
@@ -145,15 +143,15 @@ class EnumCreateLibrary
                 file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
             } else {
                 $msgHtml = "<?php\n\n" . view(
-                        $this->templateName,
-                        [
-                            'nameSpace' => $nameSpace,
-                            'className' => $className,
-                            'tableName' => $tableName,
-                            'enumDataRows' => $enumDataRows,
-                            'tableOptions' => $tableOptions,
-                        ]
-                    )->render();
+                    $this->templateName,
+                    [
+                        'nameSpace' => $nameSpace,
+                        'className' => $className,
+                        'tableName' => $tableName,
+                        'enumDataRows' => $enumDataRows,
+                        'tableOptions' => $tableOptions,
+                    ]
+                )->render();
 
                 // if it doesn't exist create and make sure it exists
                 if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
@@ -161,17 +159,17 @@ class EnumCreateLibrary
                 }
                 file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
 
-                $idClassName = $className.'Id';
+                $idClassName = $className . 'Id';
                 $msgHtml = "<?php\n\n" . view(
-                        $this->templateIdName,
-                        [
-                            'nameSpace' => $nameSpace,
-                            'className' => $idClassName,
-                            'tableName' => $tableName,
-                            'enumDataRows' => $enumDataRows,
-                            'tableOptions' => $tableOptions,
-                        ]
-                    )->render();
+                    $this->templateIdName,
+                    [
+                        'nameSpace' => $nameSpace,
+                        'className' => $idClassName,
+                        'tableName' => $tableName,
+                        'enumDataRows' => $enumDataRows,
+                        'tableOptions' => $tableOptions,
+                    ]
+                )->render();
 
                 // if it doesn't exist create and make sure it exists
                 if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
@@ -179,7 +177,6 @@ class EnumCreateLibrary
                 }
                 file_put_contents($this->enumPath . '/' . $idClassName . '.php', $msgHtml);
             }
-
         }
     }
 

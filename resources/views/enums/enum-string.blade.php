@@ -14,8 +14,6 @@ enum {{ $className }}: string
     use Values;
 
 @foreach ($enumDataRows as $enumDataRow)
-    case {{ $enumDataRow->nameString }}_ID = '{{ $enumDataRow->id }}';
     case {{ $enumDataRow->nameString }} = '{{ $enumDataRow->name }}';
-
 @endforeach
 }

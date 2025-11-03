@@ -18,20 +18,22 @@
   ],
   "homepage": "https://github.com/haakco/laravel-enum-generator",
   "require": {
-    "php": ">=8.0",
-    "illuminate/database": ">=8",
-    "illuminate/support": ">=8",
-    "archtechx/enums": ">=0.3"
+    "php": "^8.4",
+    "illuminate/support": "^12.0",
+    "illuminate/console": "^12.0",
+    "illuminate/database": "^12.0",
+    "archtechx/enums": ">=1.1.2"
   },
   "require-dev": {
-    "ergebnis/composer-normalize": ">=2",
-    "mockery/mockery": ">=1",
-    "orchestra/testbench": ">=8",
-    "phpunit/phpunit": ">=9",
+    "brainmaestro/composer-git-hooks": "^3.0",
+    "brianium/paratest": "*",
+    "ergebnis/composer-normalize": "^2.48",
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^10.6",
+    "phpunit/phpunit": "^12.0",
     "roave/security-advisories": "dev-latest",
-    "sempro/phpunit-pretty-print": ">=1",
-    "symplify/coding-standard": ">=12",
-    "symplify/easy-coding-standard": ">=12"
+    "symplify/coding-standard": ">=13",
+    "symplify/easy-coding-standard": ">=12.6"
   },
   "autoload": {
     "psr-4": {
@@ -63,7 +65,7 @@
     "process-timeout": 2000,
     "sort-packages": true
   },
-  "scripts" : {
+  "scripts": {
     "lint": [
       "@php vendor/bin/ecs check --fix --no-interaction"
     ]

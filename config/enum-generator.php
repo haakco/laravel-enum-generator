@@ -11,6 +11,7 @@ return [
     'default-prepend_class' => '',
     'default-prepend_name' => '',
     'enumPath' => app_path() . '/Models/Enums',
+    'default-order-by' => ['name', 'id'],
     'tables' => [
         //        'public.permissions' => [
         //            'uuid' => false,

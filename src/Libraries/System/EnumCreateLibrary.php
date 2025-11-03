@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace HaakCo\LaravelEnumGenerator\Libraries\System;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
-
 use function config;
 use function is_int;
 use function is_string;
+use function preg_match;
 use function str_replace;
 
 class EnumCreateLibrary
@@ -38,6 +39,11 @@ class EnumCreateLibrary
 
     private string $defaultNameField;
 
+    /**
+     * @var array<int, array{column: string, direction: string}>
+     */
+    private array $defaultOrderBy;
+
     public function __construct()
     {
         $this->defaultLeaveSchema = config('enum-generator.default-leave-schema', true);
@@ -47,6 +53,7 @@ class EnumCreateLibrary
         $this->tableNames = config('enum-generator.tables');
         $this->defaultIdField = config('enum-generator.id-field', 'id');
         $this->defaultNameField = config('enum-generator.name-field', 'name');
+        $this->defaultOrderBy = $this->normaliseOrderBy(config('enum-generator.default-order-by', ['name', 'id']));
     }
 
     public function create(?Command $commandThis = null): void
@@ -73,6 +80,7 @@ class EnumCreateLibrary
                 $tableOptions['prepend-name'] = $tableOptions['prepend-name'] ?? $this->defaultPrependName;
                 $tableOptions['id-field'] = $tableOptions['id-field'] ?? $this->defaultIdField;
                 $tableOptions['name-field'] = $tableOptions['name-field'] ?? $this->defaultNameField;
+                $tableOptions['order-by'] = $this->normaliseOrderBy($tableOptions['order-by'] ?? $this->defaultOrderBy);
 
                 $this->log('Creating enum for ' . $tableName);
 
@@ -80,16 +88,21 @@ class EnumCreateLibrary
                     $tableOptions['id-field'] . ' as id' .
                     ', ' . $tableOptions['name-field'] . ' as name';
 
-                if (!empty($tableOptions['uuid'])) {
+                if (! empty($tableOptions['uuid'])) {
                     $sql .= ', uuid';
                 }
 
                 $sql .= ' from ' . $tableName;
+
+                $orderByClauses = $this->buildOrderByClauses($tableOptions['order-by']);
+                if ($orderByClauses !== []) {
+                    $sql .= ' order by ' . implode(', ', $orderByClauses);
+                }
                 $enumDataRows = DB::select($sql);
 
                 $className = '';
                 foreach (explode('.', $tableName) as $subName) {
-                    if (!empty($tableOptions['leave-schema'])) {
+                    if (! empty($tableOptions['leave-schema'])) {
                         $className .= Str::studly($subName);
                     } else {
                         $className = Str::studly($subName);
@@ -97,7 +110,7 @@ class EnumCreateLibrary
                 }
 
                 $className .= 'Enum';
-                if (!empty($tableOptions['prepend-class'])) {
+                if (! empty($tableOptions['prepend-class'])) {
                     $className = Str::studly($tableOptions['prepend-class']) . '_' . $className;
                 }
                 $className = Str::studly($className);
@@ -111,7 +124,7 @@ class EnumCreateLibrary
                         $enumDataRow->nameString = 'N_' . $enumDataRow->nameString;
                     }
 
-                    if (!empty($tableOptions['prepend-name'])) {
+                    if (! empty($tableOptions['prepend-name'])) {
                         $enumDataRow->nameString = strtoupper($tableOptions['prepend_name']) .
                             '_' .
                             $enumDataRow->nameString;
@@ -124,65 +137,155 @@ class EnumCreateLibrary
                     );
                 }
 
+                usort(
+                    $enumDataRows,
+                    static function ($left, $right): int {
+                        $nameComparison = $left->nameString <=> $right->nameString;
+
+                        if ($nameComparison !== 0) {
+                            return $nameComparison;
+                        }
+
+                        return $left->id <=> $right->id;
+                    }
+                );
+
                 $nameSpace = 'App\\' . str_replace([app_path() . '/', '/'], ['', '\\'], $this->enumPath);
 
-                if (!config('enum-generator.use-enum-format', false)) {
+                if (! config('enum-generator.use-enum-format', false)) {
                     $msgHtml = "<?php\n\n" . view(
-                            $this->templateOldName,
-                            [
-                                'nameSpace' => $nameSpace,
-                                'className' => $className,
-                                'tableName' => $tableName,
-                                'enumDataRows' => $enumDataRows,
-                                'tableOptions' => $tableOptions,
-                            ]
-                        )->render();
+                        $this->templateOldName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $className,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
 
                     // if it doesn't exist create and make sure it exists
-                    if (!is_dir($this->enumPath) && !mkdir($this->enumPath, 440) && !is_dir($this->enumPath)) {
+                    if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
                         throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
                     }
                     file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
                 } else {
                     $msgHtml = "<?php\n\n" . view(
-                            $this->templateName,
-                            [
-                                'nameSpace' => $nameSpace,
-                                'className' => $className,
-                                'tableName' => $tableName,
-                                'enumDataRows' => $enumDataRows,
-                                'tableOptions' => $tableOptions,
-                            ]
-                        )->render();
+                        $this->templateName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $className,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
 
                     // if it doesn't exist create and make sure it exists
-                    if (!is_dir($this->enumPath) && !mkdir($this->enumPath, 440) && !is_dir($this->enumPath)) {
+                    if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
                         throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
                     }
                     file_put_contents($this->enumPath . '/' . $className . '.php', $msgHtml);
 
                     $idClassName = $className . 'Id';
                     $msgHtml = "<?php\n\n" . view(
-                            $this->templateIdName,
-                            [
-                                'nameSpace' => $nameSpace,
-                                'className' => $idClassName,
-                                'tableName' => $tableName,
-                                'enumDataRows' => $enumDataRows,
-                                'tableOptions' => $tableOptions,
-                            ]
-                        )->render();
+                        $this->templateIdName,
+                        [
+                            'nameSpace' => $nameSpace,
+                            'className' => $idClassName,
+                            'tableName' => $tableName,
+                            'enumDataRows' => $enumDataRows,
+                            'tableOptions' => $tableOptions,
+                        ]
+                    )->render();
 
                     // if it doesn't exist create and make sure it exists
-                    if (!is_dir($this->enumPath) && !mkdir($this->enumPath, 440) && !is_dir($this->enumPath)) {
+                    if (! is_dir($this->enumPath) && ! mkdir($this->enumPath, 440) && ! is_dir($this->enumPath)) {
                         throw new RuntimeException(sprintf('Di rectory "%s" was not created', $this->enumPath));
                     }
                     file_put_contents($this->enumPath . '/' . $idClassName . '.php', $msgHtml);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->log('Error creating enum for ' . $tableName . ': ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * @param mixed $orderByConfig
+     *
+     * @return array<int, array{column: string, direction: string}>
+     */
+    private function normaliseOrderBy($orderByConfig): array
+    {
+        if (is_array($orderByConfig)) {
+            $normalised = [];
+
+            foreach ($orderByConfig as $key => $value) {
+                if (is_array($value) && isset($value['column'])) {
+                    $normalised[] = [
+                        'column' => (string) $value['column'],
+                        'direction' => $this->normaliseDirection($value['direction'] ?? 'asc'),
+                    ];
+                    continue;
+                }
+
+                if (is_string($key)) {
+                    $normalised[] = [
+                        'column' => $key,
+                        'direction' => $this->normaliseDirection($value),
+                    ];
+                    continue;
+                }
+
+                if (is_string($value)) {
+                    $normalised[] = [
+                        'column' => $value,
+                        'direction' => 'ASC',
+                    ];
+                }
+            }
+
+            return $normalised;
+        }
+
+        if (is_string($orderByConfig) && $orderByConfig !== '') {
+            return [
+                [
+                    'column' => $orderByConfig,
+                    'direction' => 'ASC',
+                ],
+            ];
+        }
+
+        return [];
+    }
+
+    private function normaliseDirection($direction): string
+    {
+        return strtoupper((string) $direction) === 'DESC' ? 'DESC' : 'ASC';
+    }
+
+    /**
+     * @param array<int, array{column: string, direction: string}> $orderBy
+     *
+     * @return array<int, string>
+     */
+    private function buildOrderByClauses(array $orderBy): array
+    {
+        $clauses = [];
+
+        foreach ($orderBy as $order) {
+            $column = $order['column'];
+
+            if (! preg_match('/^[A-Za-z0-9_\\.]+$/', $column)) {
+                throw new RuntimeException('Invalid order-by column: ' . $column);
+            }
+
+            $clauses[] = $column . ' ' . $order['direction'];
+        }
+
+        return $clauses;
     }
 
     private function log($msg): void

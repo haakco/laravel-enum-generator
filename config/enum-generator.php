@@ -20,6 +20,11 @@ return [
         //            'prepend-name' => 'Rights',
         //            'id-field' => 'id',
         //            'name-field' => 'name',
+        //            // Filter rows by column values (only include matching rows)
+        //            'where' => [
+        //                'is_active' => true,
+        //                'type' => 'public',
+        //            ],
         //        ],
     ],
 ];

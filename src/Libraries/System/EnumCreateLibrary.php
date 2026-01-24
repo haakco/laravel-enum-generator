@@ -94,11 +94,19 @@ class EnumCreateLibrary
 
                 $sql .= ' from ' . $tableName;
 
+                $bindings = [];
+                if (! empty($tableOptions['where']) && is_array($tableOptions['where'])) {
+                    [$whereClauses, $bindings] = $this->buildWhereClauses($tableOptions['where']);
+                    if ($whereClauses !== []) {
+                        $sql .= ' where ' . implode(' and ', $whereClauses);
+                    }
+                }
+
                 $orderByClauses = $this->buildOrderByClauses($tableOptions['order-by']);
                 if ($orderByClauses !== []) {
                     $sql .= ' order by ' . implode(', ', $orderByClauses);
                 }
-                $enumDataRows = DB::select($sql);
+                $enumDataRows = DB::select($sql, $bindings);
 
                 $className = '';
                 foreach (explode('.', $tableName) as $subName) {
@@ -264,6 +272,30 @@ class EnumCreateLibrary
     private function normaliseDirection($direction): string
     {
         return strtoupper((string) $direction) === 'DESC' ? 'DESC' : 'ASC';
+    }
+
+    /**
+     * Build WHERE clauses from the filter configuration.
+     *
+     * @param array<string, mixed> $where
+     *
+     * @return array{0: array<int, string>, 1: array<int, mixed>}
+     */
+    private function buildWhereClauses(array $where): array
+    {
+        $clauses = [];
+        $bindings = [];
+
+        foreach ($where as $column => $value) {
+            if (! preg_match('/^[A-Za-z0-9_\\.]+$/', $column)) {
+                throw new RuntimeException('Invalid where column: ' . $column);
+            }
+
+            $clauses[] = $column . ' = ?';
+            $bindings[] = $value;
+        }
+
+        return [$clauses, $bindings];
     }
 
     /**
